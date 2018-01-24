@@ -47,8 +47,8 @@
 
 	do_math:
 
-		# FIXME: Store the $ra of do_math to the stack.
-		# Since it is calling anothr function.
+		# Store the $ra of do_math to the stack, since it is calling another function
+		sw $ra, 0($sp)
 		
 		addition:
 			bne $a2, '+', subtraction
@@ -76,26 +76,39 @@
 			syscall	
 		
 		print_result:
+			# Get the result returned from the operation
+			add $t0, $v0, $zero
+			add $t1, $v1, $zero
+
 			# Print the 1st integer
 			li $v0, 1
 			add $a0, $a1, $zero
 			syscall
 
-			# FIXME: Print a space
+			# Print a space
+			li $v0, 11
+			li $a0, 32		# 32 - Is the ASCII decimal value of ' '
+			syscall 
 
 			# Print the sign character
 			li $v0, 11
 			add $a0, $a2, $zero
 			syscall
 
-			# FIXME: Print a space
+			# Print a space
+			li $v0, 11
+			li $a0, 32		# 32 - Is the ASCII decimal value of ' '
+			syscall 
 
 			# Print the 2nd integer
 			li $v0, 1
 			add $a0, $a3, $zero
 			syscall
 
-			# FIXME: Print space
+			# Print space
+			li $v0, 11
+			li $a0, 32		# 32 - Is the ASCII decimal value of ' '
+			syscall 
 
 			# Print the equal sign charcter
 			li $v0, 11
@@ -103,31 +116,47 @@
 			syscall
 
 			# Print space
-			lli $v0, 11
+			li $v0, 11
 			li $a0, 32		# 32 - Is the ASCII decimal value of ' '
 			syscall 
 
-			# FIXME: Print the integer result
+			# Print the integer result
+			beq $t1, 0, result_32bits
 
+			result_32bits:
+				li $v0, 1
+				add $a0, $t0, $zero
+				syscall
+			
+		# Retrive the $ra value for do_math from the stack
+		lw $ra, 0($sp)
 
-
-
-		# FIXME: Retrive the $ra value for do math from the stack
-		jr $ra
+		return:
+			jr $ra
 	
 	do_add:
-
+		# FIXME
+		add $v0, $a1, $a3
+		add $v1, $zero, 0
 		jr $ra
 
 	do_subtract:
-
+		# FIXME
+		sub $v0, $a1, $a3
+		add $v1, $zero, 0
 		jr $ra
 
 	do_multiply:
-
+		# FIXME
+		mult $a1, $a3	# Assuming the product is not greater than 32 bits
+		mflo $v0
+		mfhi $v1
 		jr $ra
 
 	do_divide:
-
+		# FIXME
+		div $a1, $a3	# Assuming there is no remainder
+		mflo $v0
+		mfhi $v1
 		jr $ra
 		
